@@ -43,19 +43,29 @@ void LED_R(bool status){
   else              SerialWrite(port,"d\n");
 }
 void SetMotors(int speed1,int speed2,int speed3,int speed4){
-
+	sprintf(bufferx,"f%4d%4d%4d%4d\n",speed1,speed2,speed3,speed4);
 }
 void SetDirection(int angle,int speed){
-
+  char *buffer = int2char("b",angle,false);
+  SerialWrite(port,int2char(buffer,speed,true));
 }
 void Kick(void){
 	SerialWrite(port,"e\n");
 }
 bool KickSensor(void){
-
+	SerialWrite(port,"g\n");
+        return SerialRead(port,1)[0];
 }
 int Compass(int mode){
-
+	if (mode == 1){ 
+		SerialWrite(port,"h\n");
+        	return SerialRead(port,1)[0];
+	}
+	else{
+		SerialWrite(port,"j\n");
+		char *datas = SerialRead(port,2);
+                return (datas[0]<<8+data[1]) 
+	}
 }
 int *LineSensors(void)}
 
