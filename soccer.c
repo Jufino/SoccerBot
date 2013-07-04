@@ -1,19 +1,4 @@
 #include "blaze.h"
-//--------------------------------------------------------
-char *int2char(char *buffer,int i,bool newline){ 
-  char *bufferx = (char*)malloc(strlen(buffer)*sizeof(char)+5);
-  if      (buffer != NULL && newline == false)	sprintf(bufferx,"%s%4d",buffer,i);
-  else if (buffer == NULL && newline == false)  	sprintf(bufferx,"%4d",i);
-  else if (buffer != NULL && newline == true)    sprintf(bufferx,"%s%4d\n",buffer,i);
-  else						sprintf(bufferx,"%4d\n",i);
-  unsigned char p=0;
-  do{
-        if (bufferx[p] == ' ') bufferx[p] = '0';
-  }
-  while(bufferx[p++] != '\0');
-  return bufferx;
-}
-
 //-------------------------------------------------------
 timeval startTime,endTime;
 void tik(void){
@@ -33,40 +18,52 @@ int port;
 void InitSoccer(const char *port_name,speed_t speed){
   port = SerialOpen(port_name,speed);
 }
+//-------------------------------------------------------
 int *BallSensors(void){
   SerialWrite(port,"a\n");
   char *datas =  SerialRead(port,8);
   return datas;
 }
+//-------------------------------------------------------
 void LED_R(bool status){
   if (status == 0)  SerialWrite(port,"c\n");
   else              SerialWrite(port,"d\n");
 }
+//-------------------------------------------------------
 void SetMotors(int speed1,int speed2,int speed3,int speed4){
-	sprintf(bufferx,"f%4d%4d%4d%4d\n",speed1,speed2,speed3,speed4);
-}
-void SetDirection(int angle,int speed){
-  char *buffer = int2char("b",angle,false);
+  char *bufferx = (char*)malloc(21*sizeof(char));
+  sprintf(bufferx,"f%4dg%4dh%4di%4d\n",speed1,speed2,speed3,speed4);
   SerialWrite(port,int2char(buffer,speed,true));
 }
+//-------------------------------------------------------
+void SetDirection(int angle,int speed){
+  char *bufferx = (char*)malloc(9*sizeof(char));
+  sprintf(bufferx,"b%3d%4d\n", angle, speed);
+  SerialWrite(port,bufferx)
+}
+//-------------------------------------------------------
 void Kick(void){
 	SerialWrite(port,"e\n");
 }
+//-------------------------------------------------------
 bool KickSensor(void){
-	SerialWrite(port,"g\n");
+	SerialWrite(port,"j\n");
         return SerialRead(port,1)[0];
 }
+//-------------------------------------------------------
 int Compass(int mode){
 	if (mode == 1){ 
-		SerialWrite(port,"h\n");
+		SerialWrite(port,"k\n");
         	return SerialRead(port,1)[0];
 	}
 	else{
-		SerialWrite(port,"j\n");
+		SerialWrite(port,"l\n");
 		char *datas = SerialRead(port,2);
                 return (datas[0]<<8+data[1]) 
 	}
 }
+//-------------------------------------------------------
 int *LineSensors(void)}
 
 }
+//-------------------------------------------------------
