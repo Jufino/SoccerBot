@@ -1,4 +1,4 @@
-#include "blaze.h"
+#include "soccer.h"
 //-------------------------------------------------------
 timeval startTime,endTime;
 void tik(void){
@@ -18,11 +18,16 @@ int port;
 void InitSoccer(const char *port_name,speed_t speed){
   port = SerialOpen(port_name,speed);
 }
+void CloseSoccer(void){
+	SerialClose(port);
+}
 //-------------------------------------------------------
 int *BallSensors(void){
   SerialWrite(port,"a\n");
-  char *datas =  SerialRead(port,8);
-  return datas;
+  char *dataChar =  SerialRead(port,8);
+  int *i = (int*)malloc(sizeof(int)*9);
+  for(int x=0;x<9;x++) i[x] = (int)dataChar[x];
+  return i;
 }
 //-------------------------------------------------------
 void LED_R(bool status){
@@ -33,13 +38,18 @@ void LED_R(bool status){
 void SetMotors(int speed1,int speed2,int speed3,int speed4){
   char *bufferx = (char*)malloc(21*sizeof(char));
   sprintf(bufferx,"f%4dg%4dh%4di%4d\n",speed1,speed2,speed3,speed4);
-  SerialWrite(port,int2char(buffer,speed,true));
+  unsigned char p=0;
+  do{
+        if (bufferx[p] == ' ') bufferx[p] = '0';
+  }
+  while(bufferx[p++] != '\0');
+  SerialWrite(port,bufferx);
 }
 //-------------------------------------------------------
 void SetDirection(int angle,int speed){
   char *bufferx = (char*)malloc(9*sizeof(char));
   sprintf(bufferx,"b%3d%4d\n", angle, speed);
-  SerialWrite(port,bufferx)
+  SerialWrite(port,bufferx);
 }
 //-------------------------------------------------------
 void Kick(void){
@@ -59,11 +69,11 @@ int Compass(int mode){
 	else{
 		SerialWrite(port,"l\n");
 		char *datas = SerialRead(port,2);
-                return (datas[0]<<8+data[1]) 
+                return (datas[0]*256+datas[1]); 
 	}
 }
 //-------------------------------------------------------
-int *LineSensors(void)}
-
+int *LineSensors(void){
+return 0;
 }
 //-------------------------------------------------------
