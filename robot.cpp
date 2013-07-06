@@ -23,22 +23,47 @@ int main(void){
 //        pthread_create( &cameraThread, NULL, &camera, NULL);
 	while(1){
 	int *i = BallSensors();
-	int min = 255;
+	int max = 0;
 	int index = -1;
-	for (int x=0;x<8;x++){	
-		i[x]-=60;
+	for (int x=0;x<8;x+=1){	
+		i[x]=150-i[x];
+		if(i[x]<0)i[x] =0;
 		printf("%d ",i[x]);
-		if (i[x] < min){
-			min = i[x];
-			index = i[x];
+		if (i[x] > max){
+			max = i[x];
+			index = x;
 		}
 	}
-	unsigned int sum = i[0]+i[1]+i[2]+i[3]+i[4]+i[5]+i[6]+i[7];
-	unsigned int vaha = (unsigned char)i[1]+(unsigned char)i[2]*200+(unsigned char)i[3]*400+(unsigned char)i[4]*600+(unsigned char)i[5]*800+
-			    (unsigned char)i[6]*1000+(unsigned char)i[7]*1200;
-	unsigned int vysl = 0;
-	if (sum!= 0)	vysl = vaha/sum;
-	printf("sum=%d vaha=%d vysl=%d\n",sum,vaha,vysl);
+	int index_next=0;
+	int index_last=0;
+	if (index != -1){
+	if (index == 7){
+		index_next = 0;
+		index_last = 6;
+	}
+	else if(index == 0){
+		index_next = 1;
+		index_last = 7;
+	}
+	else{
+		index_next=index+1;
+		index_last=index-1;
+	}
+	}
+	unsigned int sum = (i[index_last]+i[index]+i[index_next]);
+	unsigned int vysl;
+	int x=-1;
+	if (sum !=0){
+		vysl = (i[index_last]*2000+i[index]*4000+i[index_next]*6000)/sum;
+		if(vysl > 4250)		x = 2;
+		else if (vysl >	3850)	x = 1;
+		else			x = 0;
+	}
+	if (x == 2)	index = index*2+2;
+	else if(x==1)	index = index*2+1;
+	else if(x==0)	index = index*2;
+	if(index == 0) index = 16;
+	printf("index=%d vysl=%d sum=%d\n",index,vysl,sum);
 	usleep(50000);
 	}
 	return 0;
