@@ -17,54 +17,88 @@ using namespace std;
 //-----------------------------------------------------------
 int kbhit(void);
 void* camera(void *arg);
+int last_index=150;
+int last_distance=500;
+int Sens1null=0;
+int Sens2null=0;
 int main(void){
 	InitSoccer("/dev/ttyAMA0",B115200);
 //	pthread_t cameraThread; 
 //        pthread_create( &cameraThread, NULL, &camera, NULL);
+	CompassRaw(&Sens1null,&Sens2null);
+	CompassCalb();
 	while(1){
-	int *i = BallSensors();
-	int max = 0;
-	int index = -1;
-	for (int x=0;x<8;x+=1){	
-		i[x]=150-i[x];
-		if(i[x]<0)i[x] =0;
-		printf("%d ",i[x]);
-		if (i[x] > max){
-			max = i[x];
-			index = x;
+	int Sensor1;
+	int Sensor2;
+	CompassRaw(&Sensor1,&Sensor2);
+	printf("Sens1:%d Sens2:%d Compass:%d kicksens:%d \n",Sensor1,Sensor2,Compass(1),KickSensor());
+/*	signed char index=0;
+	unsigned int distance=0;
+	float hodnota = (float)Compass(1)*1.412;
+	int calb=0;
+	if(hodnota > 5) 	calb = 5;
+	else if(hodnota > -5)	calb = 0;
+	else 			calb = -5;
+	if(hodnota < 20 || hodnota>340){
+	BallSensorsCalb(&index,&distance);
+	if (((distance > 200) & (index%2==1))|((distance > 190) & (index%2==0))){
+                        switch(index){
+                                case 1: SetDirection(0,200,calb);    break;
+                                case 2: SetDirection(90,200,calb);  break;
+                                case 3: SetDirection(135,200,calb);  break;
+                                case 4: SetDirection(180,200,calb);    break;
+                                case 5: SetDirection(180,200,calb);  break;
+                                case 6: SetDirection(225,200,calb);  break;
+                                case 7: SetDirection(225,200,calb);    break;
+                                case 8: SetDirection(270,200,calb);  break;
+                                case 9: SetDirection(270,200,calb);  break;
+                                case 10: SetDirection(90,200,calb);    break;
+                                case 11: SetDirection(135,200,calb);  break;
+                                case 12: SetDirection(135,200,calb);  break;
+                                case 13: SetDirection(180,200,calb);    break;
+                                case 14: SetDirection(180,200,calb);  break;
+                                case 15: SetDirection(225,200,calb);  break;
+                                case 16: SetDirection(270,200,calb);  break;
+                                default: SetDirection(0,0,0);     break;
+                        }
+         }
+         else{
+                        switch(index){
+                                case 1: SetDirection(0,200,calb);    break;
+                                case 2: SetDirection(90,200,calb);  break;
+                                case 3: SetDirection(45,200,calb);  break;
+                                case 4: SetDirection(90,200,calb);    break;
+                                case 5: SetDirection(90,200,calb);  break;
+                                case 6: SetDirection(135,200,calb);  break;
+                                case 7: SetDirection(135,200,calb);    break;
+                                case 8: SetDirection(180,200,calb);  break;
+                                case 9: SetDirection(180,200,calb);  break;
+                                case 10: SetDirection(180,200,calb);    break;
+                                case 11: SetDirection(225,200,calb);  break;
+                                case 12: SetDirection(225,200,calb);  break;
+                                case 13: SetDirection(270,200,calb);    break;
+                                case 14: SetDirection(270,200,calb);  break;
+                                case 15: SetDirection(315,200,calb);  break;
+                                case 16: SetDirection(270,200,calb);  break;
+                                default: SetDirection(0,0,0);     break;
+			}
 		}
 	}
-	int index_next=0;
-	int index_last=0;
-	if (index != -1){
-	if (index == 7){
-		index_next = 0;
-		index_last = 6;
+else if(hodnota > 20 &&hodnota < 180)	SetMotors(-130,-130,-130,-130);
+else					SetMotors(130,130,130,130);
+//	printf("hodnota=%f\n",hodnota);
+//	usleep(5000);
 	}
-	else if(index == 0){
-		index_next = 1;
-		index_last = 7;
-	}
-	else{
-		index_next=index+1;
-		index_last=index-1;
-	}
-	}
-	unsigned int sum = (i[index_last]+i[index]+i[index_next]);
-	unsigned int vysl;
-	int x=-1;
-	if (sum !=0){
-		vysl = (i[index_last]*2000+i[index]*4000+i[index_next]*6000)/sum;
-		if(vysl > 4250)		x = 2;
-		else if (vysl >	3850)	x = 1;
-		else			x = 0;
-	}
-	if (x == 2)	index = index*2+2;
-	else if(x==1)	index = index*2+1;
-	else if(x==0)	index = index*2;
-	if(index == 0) index = 16;
-	printf("index=%d vysl=%d sum=%d\n",index,vysl,sum);
-	usleep(50000);
+
+	SetDirection(0,200,5);*/
+/*
+	LEDR(false);
+	LEDG(true);
+	usleep(200000);
+        LEDR(true);
+	LEDG(false);
+        usleep(200000);
+*/
 	}
 	return 0;
 }

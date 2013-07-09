@@ -15,17 +15,23 @@ void CloseSoccer(void);
 //----------------------------------------------------------
 int *BallSensors(void);
 //----------------------------------------------------------
-void LED_R(bool status);
+void BallSensorsCalb(signed char *positionBall,unsigned int *distanceBall);
+//----------------------------------------------------------
+void LED(bool status);
+void LEDR(bool status);
+void LEDG(bool status);
 //----------------------------------------------------------
 void SetMotors(int speed1,int speed2,int speed3,int speed4);
 //----------------------------------------------------------
-void SetDirection(int angle,int speed);
+void SetDirection(int angle,int speed,int calb);
 //----------------------------------------------------------
 void Kick(void);
 //----------------------------------------------------------
 bool KickSensor(void);
 //----------------------------------------------------------
 int Compass(int mode);
+void CompassRaw(int *Sensor1,int *Sensor2);
+void CompassCalb(void);
 //----------------------------------------------------------
 int *LineSensors(void);
 //----------------------------------------------------------
